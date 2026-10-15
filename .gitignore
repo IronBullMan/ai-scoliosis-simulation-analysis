@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+
+# ---------------------------------------------------------------
+# Data — this repository holds code only. These rules are a guard
+# against committing case-level tables, images or workbooks by accident.
+# ---------------------------------------------------------------
+*.xlsx
+*.xls
+*.csv
+*.tsv
+*.dcm
+*.png
+*.jpg
+*.jpeg
+*.tif
+*.tiff
+raw_data*
+消融实验*
