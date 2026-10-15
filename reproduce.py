@@ -130,16 +130,12 @@ def failures(path):
     for cn, en in FAILURE_LABELS.items():
         report('  ' + en, int(counts.get(cn, 0)), EXPECTED_FAILURE[en], '{:d}')
 
-    # the two prompt versions, and whether they differ in failure rate
-    v3 = g[g['提示词版本'] == 'final_v3']
-    v4 = g[g['提示词版本'] == 'final_v4']
-    section('Template revision: first 40 patients vs the remaining 314')
-    report('generations, earlier template', len(v3), 120, '{:d}')
-    report('generations, final template', len(v4), 942, '{:d}')
-    tab = np.array([[int((v3['判定'] == '失败').sum()), int((v3['判定'] == '通过').sum())],
-                    [int((v4['判定'] == '失败').sum()), int((v4['判定'] == '通过').sum())]])
-    odds, p = stats.fisher_exact(tab)
-    print(f"      failure counts {tab[:, 0].tolist()}; Fisher exact p = {p:.4g}")
+    # how many failed generations still carry a residual-curve reading; the
+    # manuscript states both numbers when it says which analyses they enter
+    measurable = int(failed['|误差|(°)'].notna().sum())
+    report('failed generations with a measurable residual curve', measurable, 148, '{:d}')
+    report('failed generations with no measurable residual curve',
+           len(failed) - measurable, 11, '{:d}')
 
 
 EXPECTED_FAILURE = {
@@ -182,28 +178,61 @@ def human_in_the_loop(path):
     report('median within-patient SD (deg)', round(allthree['三次SD(°)'].median(), 2), 3.16, '{:.2f}')
     report('median best-minus-worst (deg)', round(allthree['最好-最差(°)'].median(), 2), 5.91, '{:.2f}')
 
-    first = per['首张误差(°)'].values
+    # The first generated output is the zero-curation comparator: the first
+    # attempt of each patient, whatever the failure screen later decided about
+    # it. That is the only definition that can be reconstructed attempt by
+    # attempt from the generation table, and it is the one the manuscript uses.
+    # An attempt with no measurable residual curve cannot be within the window,
+    # so it counts as a miss and the denominator stays the full cohort.
+    first = gen[gen['代数'] == 1].set_index('病例号')['|误差|(°)'].reindex(per['病例号']).values
+    miss = np.where(np.isnan(first), np.inf, first)
     picked = per['选用图误差(°)'].values
-    report('first output within +/-5 deg (%)', round(100 * (first <= 5).mean(), 1), 68.0, '{:.1f}', tol=0.3)
+    # the manuscript quotes this one to the nearest whole percent (67%), unlike
+    # the 81.6% beside it, so check it at that precision and print the rest
+    report('first output within +/-5 deg (%)', int(round(100 * (miss <= 5).mean())), 67, '{:d}')
+    print(f"      (exact {100 * (miss <= 5).mean():.2f}%, {int((miss <= 5).sum())} of {len(miss)})")
     report('selected output within +/-5 deg (%)', round(100 * (picked <= 5).mean(), 1), 81.6, '{:.1f}')
     report('MAE, selected output (deg)', round(picked.mean(), 2), 3.26, '{:.2f}')
-    report('MAE, first output (deg)', round(first.mean(), 2), 3.95, '{:.2f}')
+    report('MAE, first output (deg)', round(np.nanmean(first), 2), 3.96, '{:.2f}')
+    print(f"      ({int(np.isnan(first).sum())} first attempts had no measurable "
+          f"curve; they count as misses above and are excluded from the MAE)")
 
     # the manuscript reports this paired difference with a Wilcoxon signed-rank
     # p-value; check the inequality it states rather than a point estimate
-    z, p = wilcoxon_signed_rank(picked, first)
+    pair = ~np.isnan(first)
+    z, p = wilcoxon_signed_rank(picked[pair], first[pair])
     ok = p < 0.001
     if not ok:
         PROBLEMS.append(('Wilcoxon p, selected vs first output', p, '< 0.001'))
     print(f"  {'ok ' if ok else 'DIFF'} {'Wilcoxon p, selected vs first':<46} "
           f"computed {p:<22.4g} reported < 0.001")
-    r, _ = stats.pearsonr(picked, first)
+    r, _ = stats.pearsonr(picked[pair], first[pair])
     print(f"      (normal approximation, z = {z:.3f}; scipy exact would give "
-          f"p = {stats.wilcoxon(picked, first).pvalue:.4g})")
+          f"p = {stats.wilcoxon(picked[pair], first[pair]).pvalue:.4g})")
 
-    # geometric optimum: the best candidate each patient could have had
-    best = gen.groupby('病例号')['|误差|(°)'].min()
-    report('geometric optimum within +/-5 deg (%)', round(100 * (best <= 5).mean(), 1), 83.6, '{:.1f}')
+    # Geometric reference: the candidate each patient could have had if Cobb
+    # error alone had decided the selection. Candidates removed by the failure
+    # screen are excluded, because a safe workflow could never reach them, so
+    # this bounds what screening plus selection could attain in this cohort.
+    # The paired test is exact McNemar against the surgeon-selected outcome.
+    screened = gen[gen['判定'] == '通过'].groupby('病例号')['|误差|(°)'].min().reindex(per['病例号'])
+    report('geometric reference within +/-5 deg (%)',
+           round(100 * (screened <= 5).mean(), 1), 83.3, '{:.1f}')
+    report('geometric reference: additional patients vs selected',
+           int((screened <= 5).sum()) - int((picked <= 5).sum()), 6, '{:d}')
+    b = int(((screened <= 5) & (picked > 5)).sum())
+    c = int(((screened > 5) & (picked <= 5)).sum())
+    pm = stats.binomtest(b, b + c, 0.5).pvalue if b + c else 1.0
+    report('geometric reference vs selected (exact McNemar p)', round(pm, 4), 0.0312, '{:.4f}')
+    report('first output to reference: patients improvable',
+           int((screened <= 5).sum()) - int((miss <= 5).sum()), 58, '{:d}')
+    report('  of whom surgeon selection recovered',
+           int((picked <= 5).sum()) - int((miss <= 5).sum()), 52, '{:d}')
+    # a single patient separates this from the screen-inclusive figure (296);
+    # check it, so that a change in the screening outcome cannot pass silently
+    allmin = gen.groupby('病例号')['|误差|(°)'].min()
+    report('geometric reference incl. screen failures (%)',
+           round(100 * (allmin <= 5).mean(), 1), 83.6, '{:.1f}')
 
     section('Reproducibility of the selection step')
     s1, s2, s3 = (sel['选择者1_选中代数'], sel['选择者2_选中代数'], sel['选择者3_选中代数'])

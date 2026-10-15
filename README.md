@@ -135,6 +135,18 @@ templates use Fisher's exact test. **Survey domains** across simulation-error
 categories use Kruskal–Wallis. **Tier 3B** uses a linear mixed model with a
 random intercept for clinician, and a GEE logistic model clustered by clinician.
 
+**Two defined conventions.** The *first generated output* is the first of the
+three attempts for that patient, whatever the failure screen later decided about
+it — the zero-curation comparator. An attempt that yielded no measurable
+residual curve counts as a miss for the threshold proportion and is excluded
+from the mean absolute error, so the proportion keeps the full cohort as its
+denominator. The *geometric reference* is the candidate, among those that
+**passed** the failure screen, whose simulated Cobb angle was closest to the
+true postoperative value. Screen-failed candidates are excluded because a
+workflow that screens failures can never select them; including them would
+report a ceiling the workflow cannot reach. The screen-inclusive figure is
+printed alongside it, so the difference is visible rather than implied.
+
 **Comparator models** — leave-one-out cross-validation, with standardisation
 and vertebral-level coding fitted inside each training fold. The correction-rate
 baselines predict `preoperative × (1 − mean correction rate of the other 353)`;
@@ -163,7 +175,7 @@ interface exposed no sampling parameters, which is stated in the manuscript.
 | --- | --- |
 | Tier 1 agreement, coronal balance, Bland–Altman, ICC, CCC, Pearson | `reproduce.py` |
 | Inter-reader measurement reliability | `reproduce.py` |
-| Generation counts, failure taxonomy, template comparison | `reproduce.py` |
+| Generation counts, failure taxonomy, measurability of failures | `reproduce.py` |
 | Human-in-the-loop workflow, selector agreement, geometric optimum | `reproduce.py` |
 | Table 4 baselines and information-matched models | `comparators.py` |
 | Table 4 surgeon estimates and panel mean | `surgeon_comparison.py` |
