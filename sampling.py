@@ -6,8 +6,8 @@ Tier 2 and Tier 3. The procedure is implemented here, and the sample actually
 analysed is checked against the description given in the manuscript.
 
 Usage:
-    python sampling.py [--data PATH_TO_raw_data_待补.xlsx]
-                       [--tier2-map PATH_TO_Tier2_图号映射.csv]
+    python sampling.py [--data PATH_TO_case_level_tables.xlsx]
+                       [--tier2-map PATH_TO_tier2_image_mapping.csv]
 
 Tier 2
     120 images: for each of 60 patients, one AI-generated simulation and that
@@ -46,8 +46,8 @@ import pandas as pd
 from checks import report, check, section, finish
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-DEFAULT_DATA = os.path.join(HERE, os.pardir, 'raw_data_待补.xlsx')
-DEFAULT_MAP = os.path.join(HERE, os.pardir, 'Tier2_图号映射.csv')
+DEFAULT_DATA = os.path.join(HERE, os.pardir, 'data', 'case_level_tables.xlsx')
+DEFAULT_MAP = os.path.join(HERE, os.pardir, 'data', 'tier2_image_mapping.csv')
 
 TIER3A_QUOTA = {'acceptable': 35, 'under': 10, 'over': 5}
 

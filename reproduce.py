@@ -2,14 +2,14 @@
 """Reproduce the statistics reported in the manuscript.
 
 Usage:
-    python reproduce.py [--data PATH_TO_raw_data_待补.xlsx] [--ablation PATH]
+    python reproduce.py [--data PATH_TO_case_level_tables.xlsx] [--ablation PATH]
 
 The script prints one line per reported quantity: the value it computed, and the
 value printed in the manuscript. Differences are collected and summarised at the
 end, so a mismatch cannot pass unnoticed.
 
 Inputs
-    raw_data_待补.xlsx   case-level analysis tables for the primary study
+    case_level_tables.xlsx  case-level analysis tables for the primary study
     --ablation           the prompt-sensitivity workbook (optional); the
                          corresponding section is skipped if it is absent
 """
@@ -29,8 +29,8 @@ from agreement import (icc21, icc21_ci, ccc, ccc_ci, bland_altman, wilson,
 from checks import PROBLEMS, report, section, finish
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-DEFAULT_DATA = os.path.join(HERE, os.pardir, 'raw_data_待补.xlsx')
-DEFAULT_ABLATION = os.path.join(HERE, os.pardir, '消融实验', '消融实验_原始记录.xlsx')
+DEFAULT_DATA = os.path.join(HERE, os.pardir, 'data', 'case_level_tables.xlsx')
+DEFAULT_ABLATION = os.path.join(HERE, os.pardir, 'data', 'ablation_record.xlsx')
 
 
 # --------------------------------------------------------------------------

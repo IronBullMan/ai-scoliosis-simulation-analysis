@@ -24,5 +24,6 @@ venv/
 *.jpeg
 *.tif
 *.tiff
-raw_data*
-消融实验*
+
+# the conventional place for the input tables, if a copy is ever placed here
+data/

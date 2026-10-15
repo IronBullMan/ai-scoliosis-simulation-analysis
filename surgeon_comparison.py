@@ -9,7 +9,7 @@ model, recorded to 0.1 degrees, and were scored against the same blinded
 reference measurement used throughout the manuscript.
 
 Usage:
-    python surgeon_comparison.py [--data PATH_TO_raw_data_待补.xlsx]
+    python surgeon_comparison.py [--data PATH_TO_case_level_tables.xlsx]
                                  [--surgeons PATH_TO_surgeon_estimation_case_level.csv]
 
 The surgeon table is aligned row-for-row with T1_Patient_Raw_357. That is
@@ -40,10 +40,9 @@ from agreement import icc21, wilcoxon_signed_rank
 from checks import report, check, section, finish
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-DEFAULT_DATA = os.path.join(HERE, os.pardir, 'raw_data_待补.xlsx')
+DEFAULT_DATA = os.path.join(HERE, os.pardir, 'data', 'case_level_tables.xlsx')
 DEFAULT_SURGEONS = os.path.join(
-    HERE, os.pardir, '审稿意见11_外科医生估计对照_模拟数据', '02_数据',
-    'surgeon_estimation_case_level.csv')
+    HERE, os.pardir, 'data', 'surgeon_estimation_case_level.csv')
 
 # the column names in the surgeon table; remapped here so the script states its
 # own expectations rather than depending on a particular delivery format

@@ -6,7 +6,7 @@ against the same blinded reference measurement as the AI workflow, by
 leave-one-out cross-validation over the 354 patients.
 
 Usage:
-    python comparators.py [--data PATH_TO_raw_data_待补.xlsx]
+    python comparators.py [--data PATH_TO_case_level_tables.xlsx]
 
 What each comparator receives
     Correction-rate baselines
@@ -58,7 +58,7 @@ from checks import report, check, section, finish
 warnings.filterwarnings('ignore', category=FutureWarning)
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-DEFAULT_DATA = os.path.join(HERE, os.pardir, 'raw_data_待补.xlsx')
+DEFAULT_DATA = os.path.join(HERE, os.pardir, 'data', 'case_level_tables.xlsx')
 
 RANDOM_STATE = 0          # inert for these two models; recorded for completeness
 ALPHA_GRID = np.logspace(-3, 3, 25)

@@ -21,7 +21,7 @@ matching (`disp_*`), the last expressed both in pixels and as a percentage of th
 inter-iliac width.
 
 Usage:
-    python preservation.py [--metrics PATH_TO_preservation_metrics.csv]
+    python preservation.py [--metrics PATH_TO_registration_metrics.csv]
 
 The registration itself needs the image files and a registration library, and is
 performed by a separate script that is not distributed here. This script starts
@@ -44,7 +44,7 @@ from agreement import wilcoxon_signed_rank
 from checks import report, check, section, finish
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-DEFAULT_METRICS = os.path.join(HERE, os.pardir, 'preservation', 'preservation_metrics.csv')
+DEFAULT_METRICS = os.path.join(HERE, os.pardir, 'data', 'registration_metrics.csv')
 
 AI, POSTOP = 'AI', 'POSTOP'
 REGIONS = [('pelvis', 'iliac wings and sacrum'),

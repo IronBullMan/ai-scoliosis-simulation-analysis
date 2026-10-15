@@ -38,23 +38,30 @@ the corresponding author.
 python -m venv .venv && . .venv/bin/activate
 pip install -r requirements.txt
 
-./run_all.sh /path/to/raw_data_待补.xlsx --ablation /path/to/消融实验_原始记录.xlsx
+./run_all.sh /path/to/case_level_tables.xlsx --ablation /path/to/ablation_record.xlsx
 ```
 
 or one analysis at a time:
 
 ```bash
-python reproduce.py          --data /path/to/raw_data_待补.xlsx
-python comparators.py        --data /path/to/raw_data_待补.xlsx
-python surgeon_comparison.py --data /path/to/raw_data_待补.xlsx --surgeons /path/to/surgeon_estimation_case_level.csv
-python sampling.py           --data /path/to/raw_data_待补.xlsx
-python preservation.py       --metrics /path/to/preservation_metrics.csv
+python reproduce.py          --data /path/to/case_level_tables.xlsx
+python comparators.py        --data /path/to/case_level_tables.xlsx
+python surgeon_comparison.py --data /path/to/case_level_tables.xlsx --surgeons /path/to/surgeon_estimation_case_level.csv
+python sampling.py           --data /path/to/case_level_tables.xlsx
+python preservation.py       --metrics /path/to/registration_metrics.csv
 ```
 
 `--ablation` is optional; that section is skipped with a notice if the file is
 not supplied. Run without `--data`, every script stops immediately with
 `data file not found`. That is intended rather than a defect: the case-level
 tables referred to above are not part of this repository.
+
+Every script has a default input path of `../data/<name>` relative to this
+directory, where `<name>` is the generic filename listed under *Input tables*
+below. Putting the tables in a `data/` folder alongside this package therefore
+lets the scripts run with no arguments; otherwise pass the paths explicitly as
+above. The filenames are generic placeholders — the tables may be stored under
+any names, and no directory layout is assumed beyond what you pass in.
 
 Each script prints one line per reported quantity. Any value that differs from
 the manuscript is marked `DIFF`, listed again in the summary, and makes the
@@ -63,7 +70,7 @@ five scripts run to completion with no `DIFF` lines.
 
 ## Input tables
 
-`raw_data_待补.xlsx`, one sheet per analysis:
+`case_level_tables.xlsx`, one sheet per analysis:
 
 | Sheet | Rows | Used for |
 | --- | --- | --- |
@@ -83,9 +90,15 @@ Data Availability statement; supplying them re-derives every value reported in
 the manuscript.
 
 Two further inputs are needed by single scripts and are likewise not
-distributed: the surgeon-estimate table read by `surgeon_comparison.py` (one row
-per patient, aligned with `T1_Patient_Raw_357`) and the per-image metrics table
-read by `preservation.py`.
+distributed: `surgeon_estimation_case_level.csv`, read by
+`surgeon_comparison.py` (one row per patient, aligned with `T1_Patient_Raw_357`),
+and `registration_metrics.csv`, the per-image metrics table read by
+`preservation.py`. `ablation_record.xlsx` holds the prompt-template ablation
+records, and `tier2_image_mapping.csv` maps the Tier 2 images to their cases.
+
+The sheet and column names inside these tables are quoted verbatim in the
+scripts, since they are how the tables are read; they are the only place where
+the delivery format of the source tables shows through.
 
 ## Estimators
 
