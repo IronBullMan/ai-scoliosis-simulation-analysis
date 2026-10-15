@@ -38,7 +38,6 @@ import argparse
 import os
 import sys
 
-import numpy as np
 import pandas as pd
 
 from agreement import wilcoxon_signed_rank
