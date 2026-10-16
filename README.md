@@ -226,3 +226,8 @@ preoperative radiograph by maximisation of mutual information — needs the imag
 files and a registration library, and is performed by a separate script that is
 not distributed. `preservation.py` starts from the per-image metrics table that
 registration produced and reproduces the reported regional medians and tests.
+
+## Licence
+
+Released under the MIT Licence (see `LICENSE`). The code may be reused and modified freely,
+including commercially, provided the copyright notice is retained.
