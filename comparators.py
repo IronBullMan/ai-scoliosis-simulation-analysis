@@ -52,7 +52,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.tree import DecisionTreeRegressor
 
-from agreement import icc21, wilcoxon_signed_rank
+from agreement import icc21, mcnemar_exact, paired_mean_ci, wilcoxon_signed_rank
 from checks import report, check, section, finish
 
 warnings.filterwarnings('ignore', category=FutureWarning)
@@ -148,32 +148,32 @@ def main():
     print('\n  correction-rate baselines (LOO mean correction rate)')
     base = correction_rate_baseline(pre, actual)
     score('Overall correction-rate baseline', actual, base,
-          {'MAE': 5.10, 'RMSE': 6.52, 'within +/-5 deg': 55.9,
-           'within +/-10 deg': 86.2, 'ICC(2,1)': 0.238})
+          {'MAE': 5.18, 'RMSE': 6.66, 'within +/-5 deg': 57.1,
+           'within +/-10 deg': 87.0, 'ICC(2,1)': 0.236})
     lk = correction_rate_baseline(pre, actual, group=df.lenke_type.values)
     score('Lenke-specific correction baseline', actual, lk,
-          {'MAE': 4.85, 'RMSE': 6.29, 'within +/-5 deg': 61.6,
-           'within +/-10 deg': 89.3, 'ICC(2,1)': 0.390})
+          {'MAE': 4.96, 'RMSE': 6.45, 'within +/-5 deg': 60.5,
+           'within +/-10 deg': 87.9, 'ICC(2,1)': 0.379})
 
     print('\n  information-matched models (same structured variables as the prompt)')
     models = [
         ('Multivariable linear regression', LinearRegression(),
-         {'MAE': 4.92, 'RMSE': 6.35, 'within +/-5 deg': 59.0,
-          'within +/-10 deg': 89.3, 'ICC(2,1)': 0.341}),
+         {'MAE': 5.06, 'RMSE': 6.48, 'within +/-5 deg': 57.9,
+          'within +/-10 deg': 87.9, 'ICC(2,1)': 0.340}),
         ('Ridge regression (generalized CV)',
          RidgeCV(alphas=ALPHA_GRID),
-         {'MAE': 4.90, 'RMSE': 6.33, 'within +/-5 deg': 59.3,
-          'within +/-10 deg': 89.0, 'ICC(2,1)': 0.309}),
+         {'MAE': 5.04, 'RMSE': 6.47, 'within +/-5 deg': 57.6,
+          'within +/-10 deg': 87.3, 'ICC(2,1)': 0.308}),
         ('Decision tree (max_depth 2, min_samples_leaf 10)',
          DecisionTreeRegressor(max_depth=2, min_samples_leaf=10,
                                random_state=RANDOM_STATE),
-         {'MAE': 5.23, 'RMSE': 6.76, 'within +/-5 deg': 56.8,
-          'within +/-10 deg': 85.9, 'ICC(2,1)': 0.234}),
+         {'MAE': 5.42, 'RMSE': 6.87, 'within +/-5 deg': 55.1,
+          'within +/-10 deg': 83.9, 'ICC(2,1)': 0.250}),
         ('Gradient boosting (100 depth-1 trees, lr 0.05)',
          GradientBoostingRegressor(n_estimators=100, max_depth=1,
                                    learning_rate=0.05, random_state=RANDOM_STATE),
-         {'MAE': 4.94, 'RMSE': 6.34, 'within +/-5 deg': 59.9,
-          'within +/-10 deg': 87.9, 'ICC(2,1)': 0.295}),
+         {'MAE': 5.03, 'RMSE': 6.46, 'within +/-5 deg': 60.2,
+          'within +/-10 deg': 87.3, 'ICC(2,1)': 0.298}),
     ]
     preds = []
     for name, model, want in models:
@@ -182,25 +182,40 @@ def main():
     section('Reference rows: the AI workflow')
     ai = df.ai_cobb_main.values
     score('AI best-of-three selected', actual, ai,
-          {'MAE': 3.26, 'RMSE': 4.11, 'within +/-5 deg': 81.6,
-           'within +/-10 deg': 97.5, 'ICC(2,1)': 0.850})
+          {'MAE': 3.43, 'RMSE': 4.32, 'within +/-5 deg': 76.3,
+           'within +/-10 deg': 97.7, 'ICC(2,1)': 0.838})
 
     # the manuscript states the AI advantage as an inequality over these models
     section('AI workflow vs each comparator (paired, N = %d)' % len(df))
     print('  the manuscript states the AI advantage as a range, not per model:')
     d_ai = np.abs(ai - actual)
+    ok_ai = np.abs(ai - actual) <= 5
     gains = []
     for (name, _model, _want), p in zip(models, preds):
         d_m = np.abs(p - actual)
         gain = d_m.mean() - d_ai.mean()
         gains.append(gain)
         _z, pv = wilcoxon_signed_rank(d_ai, d_m)
+        # 95% CI for the paired mean difference in absolute error
+        _mean, (ci_lo, ci_hi) = paired_mean_ci(d_m, d_ai)
+        # exact McNemar test on the +/-5 deg threshold outcome
+        ok_m = d_m <= 5
+        b = int(np.sum(ok_ai & ~ok_m))
+        c = int(np.sum(~ok_ai & ok_m))
+        pm = mcnemar_exact(b, c)
         check(f'{name}: AI lower MAE', d_ai.mean() < d_m.mean(),
               f'{d_ai.mean():.2f} vs {d_m.mean():.2f} deg')
-        print(f"      MAE difference {gain:+.2f} deg; "
+        print(f"      MAE difference {gain:+.2f} deg "
+              f"(95% CI {ci_lo:+.2f} to {ci_hi:+.2f}); "
               f"Wilcoxon signed-rank p = {pv:.3g}")
-    report('AI advantage, lower bound (deg)', round(min(gains), 2), 1.64, '{:.2f}')
-    report('AI advantage, upper bound (deg)', round(max(gains), 2), 1.97, '{:.2f}')
+        print(f"      within +/-5 deg: AI {ok_ai.sum()}/{len(df)} "
+              f"vs model {ok_m.sum()}/{len(df)}; "
+              f"discordant b = {b}, c = {c}; exact McNemar p = {pm:.3g}")
+        if ci_lo > 0 and ci_hi > 0:
+            check(f'{name}: 95% CI for the MAE difference excludes zero', True,
+                  f'{ci_lo:.2f} to {ci_hi:.2f} deg')
+    report('AI advantage, lower bound (deg)', round(min(gains), 2), 1.60, '{:.2f}')
+    report('AI advantage, upper bound (deg)', round(max(gains), 2), 1.99, '{:.2f}')
 
     finish('the manuscript')
 

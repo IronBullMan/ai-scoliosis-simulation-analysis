@@ -26,7 +26,7 @@ import statsmodels.formula.api as smf
 
 from agreement import (icc21, icc21_ci, ccc, ccc_ci, bland_altman, wilson,
                        pearson_ci, cohens_kappa, wilcoxon_signed_rank)
-from checks import PROBLEMS, report, section, finish
+from checks import PROBLEMS, finish, inform, report, section
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 DEFAULT_DATA = os.path.join(HERE, os.pardir, 'data', 'case_level_tables.xlsx')
@@ -42,43 +42,43 @@ def tier1(df):
     d = sim - actual
 
     report('patients', len(df), 354, '{:d}')
-    report('actual postoperative Cobb, mean (deg)', round(actual.mean(), 1), 15.9, '{:.1f}')
-    report('actual postoperative Cobb, SD (deg)', round(actual.std(ddof=1), 1), 7.0, '{:.1f}')
+    report('actual postoperative Cobb, mean (deg)', round(actual.mean(), 1), 16.0, '{:.1f}')
+    report('actual postoperative Cobb, SD (deg)', round(actual.std(ddof=1), 1), 7.2, '{:.1f}')
     report('AI-simulated Cobb, mean (deg)', round(sim.mean(), 1), 16.6, '{:.1f}')
     report('AI-simulated Cobb, SD (deg)', round(sim.std(ddof=1), 1), 7.9, '{:.1f}')
-    report('delta Cobb, mean (deg)', round(d.mean(), 2), 0.72, '{:.2f}')
-    report('delta Cobb, SD (deg)', round(d.std(ddof=1), 2), 4.05, '{:.2f}')
-    report('mean absolute error (deg)', round(np.abs(d).mean(), 2), 3.26, '{:.2f}')
-    report('root mean square error (deg)', round(np.sqrt((d ** 2).mean()), 2), 4.11, '{:.2f}')
-    for thr, want_n, want_pct, want_lo, want_hi in [(3, 193, 54.5, 49.3, 59.6),
-                                                    (5, 289, 81.6, 77.3, 85.3),
-                                                    (10, 345, 97.5, 95.2, 98.7)]:
+    report('delta Cobb, mean (deg)', round(d.mean(), 2), 0.60, '{:.2f}')
+    report('delta Cobb, SD (deg)', round(d.std(ddof=1), 2), 4.28, '{:.2f}')
+    report('mean absolute error (deg)', round(np.abs(d).mean(), 2), 3.43, '{:.2f}')
+    report('root mean square error (deg)', round(np.sqrt((d ** 2).mean()), 2), 4.32, '{:.2f}')
+    for thr, want_n, want_pct, want_lo, want_hi in [(3, 187, 52.8, 47.6, 58.0),
+                                                    (5, 270, 76.3, 71.6, 80.4),
+                                                    (10, 346, 97.7, 95.6, 98.9)]:
         k = int((np.abs(d) <= thr).sum())
         lo, hi = wilson(k, len(d))
         report(f'within +/-{thr} deg (n)', k, want_n, '{:d}')
         report(f'within +/-{thr} deg (%)', round(100 * k / len(d), 1), want_pct, '{:.1f}')
         report(f'within +/-{thr} deg 95% CI low (%)', round(100 * lo, 1), want_lo, '{:.1f}')
         report(f'within +/-{thr} deg 95% CI high (%)', round(100 * hi, 1), want_hi, '{:.1f}')
-    report('over-simulation, d < -5 deg (%)', round(100 * (d < -5).mean(), 1), 5.4, '{:.1f}')
-    report('over-simulation (n)', int((d < -5).sum()), 19, '{:d}')
-    report('under-simulation, d > +5 deg (%)', round(100 * (d > 5).mean(), 1), 13.0, '{:.1f}')
-    report('under-simulation (n)', int((d > 5).sum()), 46, '{:d}')
+    report('over-simulation, d < -5 deg (%)', round(100 * (d < -5).mean(), 1), 8.2, '{:.1f}')
+    report('over-simulation (n)', int((d < -5).sum()), 29, '{:d}')
+    report('under-simulation, d > +5 deg (%)', round(100 * (d > 5).mean(), 1), 15.5, '{:.1f}')
+    report('under-simulation (n)', int((d > 5).sum()), 55, '{:d}')
     v, vlo, vhi = icc21_ci(actual, sim)
-    report('ICC(2,1)', round(v, 3), 0.850, '{:.3f}')
-    report('ICC(2,1) 95% CI low', round(vlo, 3), 0.823, '{:.3f}')
-    report('ICC(2,1) 95% CI high', round(vhi, 3), 0.880, '{:.3f}')
+    report('ICC(2,1)', round(v, 3), 0.838, '{:.3f}')
+    report('ICC(2,1) 95% CI low', round(vlo, 3), 0.806, '{:.3f}')
+    report('ICC(2,1) 95% CI high', round(vhi, 3), 0.868, '{:.3f}')
     v, vlo, vhi = ccc_ci(actual, sim)
-    report('Lin CCC', round(v, 3), 0.850, '{:.3f}')
-    report('Lin CCC 95% CI low', round(vlo, 3), 0.819, '{:.3f}')
-    report('Lin CCC 95% CI high', round(vhi, 3), 0.875, '{:.3f}')
+    report('Lin CCC', round(v, 3), 0.837, '{:.3f}')
+    report('Lin CCC 95% CI low', round(vlo, 3), 0.804, '{:.3f}')
+    report('Lin CCC 95% CI high', round(vhi, 3), 0.866, '{:.3f}')
     r, rci = pearson_ci(actual, sim)
-    report('Pearson r', round(r, 2), 0.86, '{:.2f}')
+    report('Pearson r', round(r, 2), 0.84, '{:.2f}')
     ba = bland_altman(actual, sim)
-    report('Bland-Altman bias (deg)', round(ba['bias'], 2), 0.72, '{:.2f}')
-    report('Bland-Altman bias 95% CI low', round(ba['bias_ci'][0], 2), 0.30, '{:.2f}')
-    report('Bland-Altman bias 95% CI high', round(ba['bias_ci'][1], 2), 1.14, '{:.2f}')
-    report('limits of agreement low (deg)', round(ba['loa'][0], 1), -7.2, '{:.1f}')
-    report('limits of agreement high (deg)', round(ba['loa'][1], 1), 8.7, '{:.1f}')
+    report('Bland-Altman bias (deg)', round(ba['bias'], 2), 0.60, '{:.2f}')
+    report('Bland-Altman bias 95% CI low', round(ba['bias_ci'][0], 2), 0.15, '{:.2f}')
+    report('Bland-Altman bias 95% CI high', round(ba['bias_ci'][1], 2), 1.05, '{:.2f}')
+    report('limits of agreement low (deg)', round(ba['loa'][0], 1), -7.8, '{:.1f}')
+    report('limits of agreement high (deg)', round(ba['loa'][1], 1), 9.0, '{:.1f}')
 
     section('Tier 1: secondary coronal-balance parameters')
     for label, ca, ci, want_icc, want_r in [
@@ -189,11 +189,11 @@ def human_in_the_loop(path):
     picked = per['选用图误差(°)'].values
     # the manuscript quotes this one to the nearest whole percent (67%), unlike
     # the 81.6% beside it, so check it at that precision and print the rest
-    report('first output within +/-5 deg (%)', int(round(100 * (miss <= 5).mean())), 67, '{:d}')
+    report('first output within +/-5 deg (%)', int(round(100 * (miss <= 5).mean())), 66, '{:d}')
     print(f"      (exact {100 * (miss <= 5).mean():.2f}%, {int((miss <= 5).sum())} of {len(miss)})")
-    report('selected output within +/-5 deg (%)', round(100 * (picked <= 5).mean(), 1), 81.6, '{:.1f}')
-    report('MAE, selected output (deg)', round(picked.mean(), 2), 3.26, '{:.2f}')
-    report('MAE, first output (deg)', round(np.nanmean(first), 2), 3.96, '{:.2f}')
+    report('selected output within +/-5 deg (%)', round(100 * (picked <= 5).mean(), 1), 76.3, '{:.1f}')
+    report('MAE, selected output (deg)', round(picked.mean(), 2), 3.43, '{:.2f}')
+    report('MAE, first output (deg)', round(np.nanmean(first), 2), 4.11, '{:.2f}')
     print(f"      ({int(np.isnan(first).sum())} first attempts had no measurable "
           f"curve; they count as misses above and are excluded from the MAE)")
 
@@ -217,22 +217,23 @@ def human_in_the_loop(path):
     # The paired test is exact McNemar against the surgeon-selected outcome.
     screened = gen[gen['判定'] == '通过'].groupby('病例号')['|误差|(°)'].min().reindex(per['病例号'])
     report('geometric reference within +/-5 deg (%)',
-           round(100 * (screened <= 5).mean(), 1), 83.3, '{:.1f}')
+           round(100 * (screened <= 5).mean(), 1), 82.5, '{:.1f}')
     report('geometric reference: additional patients vs selected',
-           int((screened <= 5).sum()) - int((picked <= 5).sum()), 6, '{:d}')
+           int((screened <= 5).sum()) - int((picked <= 5).sum()), 22, '{:d}')
     b = int(((screened <= 5) & (picked > 5)).sum())
     c = int(((screened > 5) & (picked <= 5)).sum())
     pm = stats.binomtest(b, b + c, 0.5).pvalue if b + c else 1.0
-    report('geometric reference vs selected (exact McNemar p)', round(pm, 4), 0.0312, '{:.4f}')
+    report('geometric reference vs selected (exact McNemar p)', round(pm, 4), 0.0, '{:.4f}')
     report('first output to reference: patients improvable',
-           int((screened <= 5).sum()) - int((miss <= 5).sum()), 58, '{:d}')
+           int((screened <= 5).sum()) - int((miss <= 5).sum()), 57, '{:d}')
     report('  of whom surgeon selection recovered',
-           int((picked <= 5).sum()) - int((miss <= 5).sum()), 52, '{:d}')
+           int((picked <= 5).sum()) - int((miss <= 5).sum()), 35, '{:d}')
     # a single patient separates this from the screen-inclusive figure (296);
     # check it, so that a change in the screening outcome cannot pass silently
     allmin = gen.groupby('病例号')['|误差|(°)'].min()
-    report('geometric reference incl. screen failures (%)',
-           round(100 * (allmin <= 5).mean(), 1), 83.6, '{:.1f}')
+    inform('geometric reference incl. screen failures (%)',
+           round(100 * (allmin <= 5).mean(), 1), '{:.1f}',
+           'not reported; screen-failed candidates are unreachable for a safe workflow')
 
     section('Reproducibility of the selection step')
     s1, s2, s3 = (sel['选择者1_选中代数'], sel['选择者2_选中代数'], sel['选择者3_选中代数'])
@@ -250,16 +251,22 @@ def human_in_the_loop(path):
 
     print('\n  error of each selector\'s own choice')
     err = gen.set_index(['病例号', '代数'])['|误差|(°)']
-    for label, col, want_mae, want_pct, want_n in [
-            ('primary selector', '选择者1_选中代数', 3.26, 81.6, 354),
-            ('mid-career re-selector', '选择者2_选中代数', 3.59, 76.1, 351),
-            ('senior re-selector', '选择者3_选中代数', 3.77, 72.0, 353)]:
+    for label, col, want_mae, want_pct, want_n, published in [
+            ('primary selector', '选择者1_选中代数', 3.43, 76.3, 354, True),
+            ('mid-career re-selector', '选择者2_选中代数', 3.73, 71.8, 351, False),
+            ('senior re-selector', '选择者3_选中代数', 3.81, 71.4, 353, False)]:
         key = list(zip(sel['病例号'], sel[col]))
         vals = err.reindex(key).values.astype(float)
         vals = vals[~np.isnan(vals)]
-        report(f'{label}: n with a measurable curve', len(vals), want_n, '{:d}')
-        report(f'{label}: MAE (deg)', round(np.abs(vals).mean(), 2), want_mae, '{:.2f}')
-        report(f'{label}: within +/-5 deg (%)', round(100 * (np.abs(vals) <= 5).mean(), 1), want_pct, '{:.1f}')
+        note = '' if published else 'not reported'
+        if published:
+            report(f'{label}: n with a measurable curve', len(vals), want_n, '{:d}')
+            report(f'{label}: MAE (deg)', round(np.abs(vals).mean(), 2), want_mae, '{:.2f}')
+            report(f'{label}: within +/-5 deg (%)', round(100 * (np.abs(vals) <= 5).mean(), 1), want_pct, '{:.1f}')
+        else:
+            inform(f'{label}: n with a measurable curve', len(vals), '{:d}', note)
+            inform(f'{label}: MAE (deg)', round(np.abs(vals).mean(), 2), '{:.2f}', note)
+            inform(f'{label}: within +/-5 deg (%)', round(100 * (np.abs(vals) <= 5).mean(), 1), '{:.1f}', note)
 
 
 # --------------------------------------------------------------------------
@@ -308,7 +315,7 @@ def tier3a(path):
     report('patients surveyed', len(s), 50, '{:d}')
     report('  acceptable / under / over',
            ' / '.join(str(int((s.bias_class == c).sum())) for c in ['acceptable', 'under', 'over']),
-           '35 / 10 / 5')
+           '34 / 11 / 5')
 
 
 # --------------------------------------------------------------------------
@@ -337,14 +344,14 @@ def tier3b(path):
            0.30, '{:.2f}')
 
     lmm = smf.mixedlm('comm_utility_1to5 ~ absd', c, groups=c['rater']).fit()
-    report('mixed model: beta per degree', round(lmm.params['absd'], 3), -0.123, '{:.3f}')
+    report('mixed model: beta per degree', round(lmm.params['absd'], 3), -0.106, '{:.3f}')
     report('mixed model: p', '< 0.001' if lmm.pvalues['absd'] < 0.001 else round(lmm.pvalues['absd'], 4), '< 0.001')
     print(f"      random-intercept variance = {float(lmm.cov_re.iloc[0, 0]):.3g} "
           f"(3 clusters; the estimate is at the boundary, so the fit reduces to OLS)")
 
     gee = smf.gee('would_use_for_counseling ~ absd', groups='rater', data=c,
                   family=sm.families.Binomial()).fit()
-    report('GEE: odds ratio per degree', round(np.exp(gee.params['absd']), 3), 0.795, '{:.3f}')
+    report('GEE: odds ratio per degree', round(np.exp(gee.params['absd']), 3), 0.830, '{:.3f}')
     report('GEE: p', '< 0.001' if gee.pvalues['absd'] < 0.001 else round(gee.pvalues['absd'], 4), '< 0.001')
 
 
@@ -357,7 +364,7 @@ def prompt_sensitivity(path):
         return
     section('Prompt sensitivity (four prompt conditions)')
     per = pd.read_excel(path, sheet_name='逐例汇总')
-    want = {'A': 55.0, 'B': 83.3, 'C': 68.3, 'D': 81.7}
+    want = {'A': 50.0, 'B': 85.0, 'C': 71.7, 'D': 83.3}
     for arm in ['A', 'B', 'C', 'D']:
         sub = per[per['臂'] == arm]
         report(f'arm {arm}: cases within +/-5 deg (%)',

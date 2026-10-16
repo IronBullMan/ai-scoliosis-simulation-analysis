@@ -30,6 +30,11 @@ the corresponding author.
 | `sampling.py` | How the Tier 2 and Tier 3A case samples were drawn, and checks on the realised samples |
 | `preservation.py` | The exploratory regional registration comparison (images required upstream) |
 | `run_all.sh` | Runs all five self-checks in sequence |
+| `figstats.py` | Recomputes every statistic the figures plot and writes `figstats.json` |
+| `figstyle.py` | Shared plotting style, palette and input path for the figure scripts |
+| `make_fig3.py` | Figure 3 — structural agreement (scatter, Bland–Altman, error distribution) |
+| `make_fig5.py` | Figure 5 — perceived potential communication utility |
+| `make_supp.py` | Supplementary Figures S1–S5 |
 | `requirements.txt` | Pinned versions of the six dependencies |
 
 ## Running it
@@ -51,6 +56,18 @@ python sampling.py           --data /path/to/case_level_tables.xlsx
 python preservation.py       --metrics /path/to/registration_metrics.csv
 ```
 
+To regenerate the figures:
+
+```bash
+python figstats.py --data /path/to/case_level_tables.xlsx --out figstats.json
+python make_fig3.py --outdir .
+python make_fig5.py --outdir .
+python make_supp.py --outdir .
+```
+
+`figstats.py` writes `figstats.json`, which the figure scripts read; a copy computed
+from the delivered tables is included, so the three `make_*` scripts run on their own.
+
 `--ablation` is optional; that section is skipped with a notice if the file is
 not supplied. Run without `--data`, every script stops immediately with
 `data file not found`. That is intended rather than a defect: the case-level
@@ -67,6 +84,16 @@ Each script prints one line per reported quantity. Any value that differs from
 the manuscript is marked `DIFF`, listed again in the summary, and makes the
 script exit non-zero — so a silent mismatch is not possible. As delivered, all
 five scripts run to completion with no `DIFF` lines.
+
+Lines beginning `--` are quantities the scripts compute for information and that
+the manuscript does not report. They are printed, never compared, and are marked
+`not reported` so that they cannot be mistaken for published values. Two are
+printed by `reproduce.py`: the geometric reference when candidates removed by the
+failure screen are included, which a safe workflow could never reach and which is
+therefore an upper bound rather than a result; and the error a different selector
+would have obtained had they chosen instead of the primary selector, which
+quantifies how much the selection step depends on who performs it. Neither appears
+in the manuscript, the Supplementary Materials or the response to reviewers.
 
 ## Input tables
 
@@ -185,6 +212,13 @@ interface exposed no sampling parameters, which is stated in the manuscript.
 | Prompt-sensitivity threshold attainment | `reproduce.py` |
 | Tier 2 and Tier 3A sampling | `sampling.py` |
 | Regional registration metrics | `preservation.py` |
+| Figures 3 and 5 | `figstats.py`, `make_fig3.py`, `make_fig5.py` |
+| Supplementary Figures S1–S5 | `figstats.py`, `make_supp.py` |
+
+Figure 1 carries no convention-dependent number, and its flow-chart counts are
+stated in the manuscript; the two in-figure text labels that were corrected during
+revision (the Tier 1 heading in Figure 1 and one p value in Figure 4) were edited
+directly in the image files, which are author-supplied and not part of this package.
 
 One step is not reproduced here. The registration itself — affinely registering
 each simulation and each postoperative radiograph to the patient's own

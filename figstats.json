@@ -1,0 +1,629 @@
+{
+ "tier1": {
+  "n": 354,
+  "post_mean": 16.0,
+  "post_sd": 7.2,
+  "ai_mean": 16.6,
+  "ai_sd": 7.9,
+  "bias": 0.6,
+  "loa": [
+   -7.8,
+   9.0
+  ],
+  "mae": 3.43,
+  "rmse": 4.32,
+  "r": 0.844,
+  "icc": 0.838,
+  "icc_ci": [
+   0.806,
+   0.868
+  ],
+  "ccc": 0.837,
+  "ccc_ci": [
+   0.803,
+   0.864
+  ],
+  "within3": 187,
+  "within3_pct": 52.8,
+  "within5": 270,
+  "within5_pct": 76.3,
+  "within10": 346,
+  "within10_pct": 97.7,
+  "over": 29,
+  "over_pct": 8.2,
+  "under": 55,
+  "under_pct": 15.5
+ },
+ "coronal": {
+  "c7_csvl_mm": {
+   "icc": 0.879,
+   "icc_ci": [
+    0.87,
+    0.913
+   ],
+   "r": 0.893,
+   "actual_mean": 11.8,
+   "actual_sd": 7.7,
+   "ai_mean": 10.4,
+   "ai_sd": 7.7,
+   "delta_mean": -1.4,
+   "delta_sd": 3.6
+  },
+  "t1_tilt_deg": {
+   "icc": 0.872,
+   "icc_ci": [
+    0.86,
+    0.906
+   ],
+   "r": 0.885,
+   "actual_mean": 5.2,
+   "actual_sd": 3.0,
+   "ai_mean": 4.6,
+   "ai_sd": 3.0,
+   "delta_mean": -0.5,
+   "delta_sd": 1.5
+  },
+  "clavicle_deg": {
+   "icc": 0.891,
+   "icc_ci": [
+    0.878,
+    0.918
+   ],
+   "r": 0.901,
+   "actual_mean": 2.9,
+   "actual_sd": 2.0,
+   "ai_mean": 2.6,
+   "ai_sd": 2.1,
+   "delta_mean": -0.3,
+   "delta_sd": 0.9
+  }
+ },
+ "lenke": {
+  "1": {
+   "n": 168,
+   "within3_pct": 54.2,
+   "within5_pct": 79.8,
+   "mae": 3.22,
+   "rmse": 4.05,
+   "r": 0.785
+  },
+  "2": {
+   "n": 32,
+   "within3_pct": 56.2,
+   "within5_pct": 75.0,
+   "mae": 3.36,
+   "rmse": 4.4,
+   "r": 0.778
+  },
+  "3": {
+   "n": 72,
+   "within3_pct": 55.6,
+   "within5_pct": 77.8,
+   "mae": 3.41,
+   "rmse": 4.24,
+   "r": 0.879
+  },
+  "4": {
+   "n": 10,
+   "within3_pct": 30.0,
+   "within5_pct": 70.0,
+   "mae": 4.29,
+   "rmse": 4.76,
+   "r": 0.905
+  },
+  "5": {
+   "n": 32,
+   "within3_pct": 53.1,
+   "within5_pct": 71.9,
+   "mae": 3.48,
+   "rmse": 4.43,
+   "r": 0.745
+  },
+  "6": {
+   "n": 40,
+   "within3_pct": 45.0,
+   "within5_pct": 65.0,
+   "mae": 4.12,
+   "rmse": 5.19,
+   "r": 0.819
+  }
+ },
+ "correlates": {
+  "rho_pre": 0.06,
+  "p_pre": 0.2597,
+  "rho_corr": -0.032,
+  "p_corr": 0.5477
+ },
+ "tier2": {
+  "per_rater": {
+   "r1": {
+    "years": 7,
+    "group": "mid",
+    "n": 120,
+    "acc": 49.166666666666664,
+    "ci": [
+     40.4,
+     58.0
+    ],
+    "p": 0.9273,
+    "sens": 50.0,
+    "spec": 48.3,
+    "f1": 0.496,
+    "realism_ai": 3.7,
+    "realism_real": 3.6
+   },
+   "r2": {
+    "years": 9,
+    "group": "mid",
+    "n": 120,
+    "acc": 51.666666666666664,
+    "ci": [
+     42.8,
+     60.4
+    ],
+    "p": 0.7843,
+    "sens": 50.0,
+    "spec": 53.3,
+    "f1": 0.508,
+    "realism_ai": 3.2,
+    "realism_real": 3.8
+   },
+   "r3": {
+    "years": 18,
+    "group": "sen",
+    "n": 120,
+    "acc": 61.666666666666664,
+    "ci": [
+     52.7,
+     69.9
+    ],
+    "p": 0.0134,
+    "sens": 63.3,
+    "spec": 60.0,
+    "f1": 0.623,
+    "realism_ai": 3.3,
+    "realism_real": 3.7
+   },
+   "r4": {
+    "years": 22,
+    "group": "sen",
+    "n": 120,
+    "acc": 64.16666666666667,
+    "ci": [
+     55.3,
+     72.2
+    ],
+    "p": 0.0024,
+    "sens": 60.0,
+    "spec": 68.3,
+    "f1": 0.626,
+    "realism_ai": 3.1,
+    "realism_real": 4.0
+   }
+  },
+  "overall": 56.7,
+  "mid_pooled": 50.4,
+  "sen_pooled": 62.9
+ },
+ "class_counts": {
+  "acceptable": 270,
+  "under": 55,
+  "over": 29
+ },
+ "tier3a": {
+  "n": 50,
+  "concordance_1to5": {
+   "groups": {
+    "acceptable": {
+     "n": 34,
+     "mean": 3.82,
+     "sd": 0.48
+    },
+    "under": {
+     "n": 11,
+     "mean": 2.85,
+     "sd": 0.6
+    },
+    "over": {
+     "n": 5,
+     "mean": 2.68,
+     "sd": 0.66
+    }
+   },
+   "all_mean": 3.49,
+   "all_sd": 0.71,
+   "kw_p": 0.0
+  },
+  "concordance_1to5_recommend": {
+   "acceptable": {
+    "n": 34,
+    "pct": 88.2
+   },
+   "under": {
+    "n": 11,
+    "pct": 45.5
+   },
+   "over": {
+    "n": 5,
+    "pct": 60.0
+   }
+  },
+  "understanding_retro_1to5": {
+   "groups": {
+    "acceptable": {
+     "n": 34,
+     "mean": 3.89,
+     "sd": 0.44
+    },
+    "under": {
+     "n": 11,
+     "mean": 3.25,
+     "sd": 0.36
+    },
+    "over": {
+     "n": 5,
+     "mean": 2.9,
+     "sd": 0.28
+    }
+   },
+   "all_mean": 3.65,
+   "all_sd": 0.55,
+   "kw_p": 0.0
+  },
+  "understanding_retro_1to5_recommend": {
+   "acceptable": {
+    "n": 34,
+    "pct": 88.2
+   },
+   "under": {
+    "n": 11,
+    "pct": 45.5
+   },
+   "over": {
+    "n": 5,
+    "pct": 60.0
+   }
+  },
+  "confidence_retro_1to5": {
+   "groups": {
+    "acceptable": {
+     "n": 34,
+     "mean": 4.16,
+     "sd": 0.38
+    },
+    "under": {
+     "n": 11,
+     "mean": 3.25,
+     "sd": 0.62
+    },
+    "over": {
+     "n": 5,
+     "mean": 3.86,
+     "sd": 0.62
+    }
+   },
+   "all_mean": 3.93,
+   "all_sd": 0.59,
+   "kw_p": 0.0002
+  },
+  "confidence_retro_1to5_recommend": {
+   "acceptable": {
+    "n": 34,
+    "pct": 88.2
+   },
+   "under": {
+    "n": 11,
+    "pct": 45.5
+   },
+   "over": {
+    "n": 5,
+    "pct": 60.0
+   }
+  },
+  "satisfaction_retro_1to5": {
+   "groups": {
+    "acceptable": {
+     "n": 34,
+     "mean": 4.29,
+     "sd": 0.34
+    },
+    "under": {
+     "n": 11,
+     "mean": 3.87,
+     "sd": 0.42
+    },
+    "over": {
+     "n": 5,
+     "mean": 3.7,
+     "sd": 0.35
+    }
+   },
+   "all_mean": 4.14,
+   "all_sd": 0.42,
+   "kw_p": 0.0014
+  },
+  "satisfaction_retro_1to5_recommend": {
+   "acceptable": {
+    "n": 34,
+    "pct": 88.2
+   },
+   "under": {
+    "n": 11,
+    "pct": 45.5
+   },
+   "over": {
+    "n": 5,
+    "pct": 60.0
+   }
+  }
+ },
+ "tier3b": {
+  "acceptable": {
+   "n": 810,
+   "utility_mean": 4.03,
+   "utility_sd": 0.46,
+   "use_pct": 82.7
+  },
+  "under": {
+   "n": 165,
+   "utility_mean": 3.37,
+   "utility_sd": 0.55,
+   "use_pct": 62.4
+  },
+  "over": {
+   "n": 87,
+   "utility_mean": 3.69,
+   "utility_sd": 0.5,
+   "use_pct": 70.1
+  },
+  "anova_F": 137.3,
+  "anova_p": 0.0,
+  "per_rater": {
+   "Clinician A (Mid-career)": {
+    "utility_mean": 3.9,
+    "utility_sd": 0.54,
+    "use_pct": 79.7,
+    "by_class": {
+     "acceptable": {
+      "n": 270,
+      "use_pct": 82.2
+     },
+     "under": {
+      "n": 55,
+      "use_pct": 67.3
+     },
+     "over": {
+      "n": 29,
+      "use_pct": 79.3
+     }
+    }
+   },
+   "Clinician B (Senior)": {
+    "utility_mean": 3.89,
+    "utility_sd": 0.53,
+    "use_pct": 78.0,
+    "by_class": {
+     "acceptable": {
+      "n": 270,
+      "use_pct": 83.0
+     },
+     "under": {
+      "n": 55,
+      "use_pct": 61.8
+     },
+     "over": {
+      "n": 29,
+      "use_pct": 62.1
+     }
+    }
+   },
+   "Clinician C (Senior)": {
+    "utility_mean": 3.91,
+    "utility_sd": 0.53,
+    "use_pct": 78.0,
+    "by_class": {
+     "acceptable": {
+      "n": 270,
+      "use_pct": 83.0
+     },
+     "under": {
+      "n": 55,
+      "use_pct": 58.2
+     },
+     "over": {
+      "n": 29,
+      "use_pct": 69.0
+     }
+    }
+   }
+  }
+ },
+ "tier3b_utility_vs_error": {
+  "rho": -0.442,
+  "p": 0.0
+ },
+ "extra": {
+  "fig5A": {
+   "rho": -0.442,
+   "p": 0.0
+  },
+  "fig5B_rho": {
+   "rho": -0.703,
+   "p": 0.0
+  },
+  "fig5B": {
+   "n": {
+    "acceptable": 34,
+    "under": 11,
+    "over": 5
+   },
+   "mean": {
+    "acceptable": 3.82,
+    "under": 2.85,
+    "over": 2.68
+   },
+   "sd": {
+    "acceptable": 0.48,
+    "under": 0.6,
+    "over": 0.66
+   },
+   "kw_p": 0.0,
+   "p_acc_vs_over": 0.0034
+  },
+  "fig5C": {
+   "n": {
+    "acceptable": 810,
+    "under": 165,
+    "over": 87
+   },
+   "mean": {
+    "acceptable": 4.03,
+    "under": 3.37,
+    "over": 3.69
+   },
+   "sd": {
+    "acceptable": 0.46,
+    "under": 0.55,
+    "over": 0.5
+   },
+   "F": 137.3,
+   "p": 0.0
+  },
+  "fig5D": {
+   "clinician": {
+    "acceptable": 82.7,
+    "under": 62.4,
+    "over": 70.1
+   },
+   "patient": {
+    "acceptable": 88.2,
+    "under": 45.5,
+    "over": 60.0
+   }
+  },
+  "S4": {
+   "Concordance": {
+    "n": {
+     "acceptable": 34,
+     "under": 11,
+     "over": 5
+    },
+    "mean": {
+     "acceptable": 3.82,
+     "under": 2.85,
+     "over": 2.68
+    },
+    "sd": {
+     "acceptable": 0.48,
+     "under": 0.6,
+     "over": 0.66
+    },
+    "kw_p": 2.0372668462484144e-05
+   },
+   "Understanding": {
+    "n": {
+     "acceptable": 34,
+     "under": 11,
+     "over": 5
+    },
+    "mean": {
+     "acceptable": 3.89,
+     "under": 3.25,
+     "over": 2.9
+    },
+    "sd": {
+     "acceptable": 0.44,
+     "under": 0.36,
+     "over": 0.28
+    },
+    "kw_p": 3.756666248444447e-05
+   },
+   "Confidence": {
+    "n": {
+     "acceptable": 34,
+     "under": 11,
+     "over": 5
+    },
+    "mean": {
+     "acceptable": 4.16,
+     "under": 3.25,
+     "over": 3.86
+    },
+    "sd": {
+     "acceptable": 0.38,
+     "under": 0.62,
+     "over": 0.62
+    },
+    "kw_p": 0.0001814633243233181
+   },
+   "Satisfaction": {
+    "n": {
+     "acceptable": 34,
+     "under": 11,
+     "over": 5
+    },
+    "mean": {
+     "acceptable": 4.29,
+     "under": 3.87,
+     "over": 3.7
+    },
+    "sd": {
+     "acceptable": 0.34,
+     "under": 0.42,
+     "over": 0.35
+    },
+    "kw_p": 0.0014233683626601133
+   }
+  },
+  "S3": {
+   "rho_pre": 0.06,
+   "p_pre": 0.2597,
+   "rho_corr": -0.032,
+   "p_corr": 0.5477
+  },
+  "S2": {
+   "1": {
+    "n": 168,
+    "w3": 54.2,
+    "w5": 79.8,
+    "mae": 3.22,
+    "r": 0.785
+   },
+   "2": {
+    "n": 32,
+    "w3": 56.2,
+    "w5": 75.0,
+    "mae": 3.36,
+    "r": 0.778
+   },
+   "3": {
+    "n": 72,
+    "w3": 55.6,
+    "w5": 77.8,
+    "mae": 3.41,
+    "r": 0.879
+   },
+   "4": {
+    "n": 10,
+    "w3": 30.0,
+    "w5": 70.0,
+    "mae": 4.29,
+    "r": 0.905
+   },
+   "5": {
+    "n": 32,
+    "w3": 53.1,
+    "w5": 71.9,
+    "mae": 3.48,
+    "r": 0.745
+   },
+   "6": {
+    "n": 40,
+    "w3": 45.0,
+    "w5": 65.0,
+    "mae": 4.12,
+    "r": 0.819
+   }
+  }
+ }
+}

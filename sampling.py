@@ -17,8 +17,8 @@ Tier 2
 
 Tier 3A
     50 patients drawn from the 354-patient cohort by stratified sampling on the
-    simulation error category, with a fixed quota per stratum -- 35 acceptable,
-    10 under-simulation, 5 over-simulation -- rather than proportional
+    simulation error category, with a fixed quota per stratum -- 34 acceptable,
+    11 under-simulation, 5 over-simulation -- rather than proportional
     allocation, because the over-simulation stratum is small and is the
     clinically important one.
 
@@ -49,7 +49,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 DEFAULT_DATA = os.path.join(HERE, os.pardir, 'data', 'case_level_tables.xlsx')
 DEFAULT_MAP = os.path.join(HERE, os.pardir, 'data', 'tier2_image_mapping.csv')
 
-TIER3A_QUOTA = {'acceptable': 35, 'under': 10, 'over': 5}
+TIER3A_QUOTA = {'acceptable': 34, 'under': 11, 'over': 5}
 
 
 def stratified_draw(frame, stratum, n, quota=False, seed=None):

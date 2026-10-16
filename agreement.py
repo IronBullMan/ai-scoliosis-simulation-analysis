@@ -168,3 +168,38 @@ def cohens_kappa(a, b):
     po = np.trace(m) / n
     pe = (m.sum(1) @ m.sum(0)) / n ** 2
     return (po - pe) / (1 - pe)
+
+
+def paired_mean_ci(x, y, n_boot=10000, seed=0, alpha=0.05):
+    """Percentile bootstrap confidence interval for the paired mean difference.
+
+    `x` and `y` are paired measurements on the same subjects; the quantity
+    estimated is mean(x) - mean(y). Resampling is over subjects, so the pairing
+    is preserved. The seed is fixed so that the interval is reproducible.
+    """
+    x = np.asarray(x, float)
+    y = np.asarray(y, float)
+    d = x - y
+    n = d.size
+    rng = np.random.default_rng(seed)
+    idx = rng.integers(0, n, size=(n_boot, n))
+    boot = d[idx].mean(axis=1)
+    lo, hi = np.percentile(boot, [100 * alpha / 2, 100 * (1 - alpha / 2)])
+    return float(d.mean()), (float(lo), float(hi))
+
+
+def mcnemar_exact(b, c):
+    """Exact (binomial) McNemar test from the two discordant cell counts.
+
+    `b` counts pairs where the first method met the threshold and the second did
+    not; `c` counts the reverse. The two-sided p value is the exact binomial
+    probability of a result at least as extreme as the smaller of the two counts
+    under p = 0.5.
+    """
+    from math import comb
+    n = b + c
+    if n == 0:
+        return 1.0
+    k = min(b, c)
+    tail = sum(comb(n, i) for i in range(k + 1)) * (0.5 ** n)
+    return float(min(1.0, 2 * tail))

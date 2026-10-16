@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Exploratory regional comparison of the simulations against the preoperative image.
 
-For the 78 patients for whom a saved simulation and both the preoperative and the
+For the 354 patients for whom a saved simulation and both the preoperative and the
 real postoperative radiograph were available (one simulation per patient), each
 simulation and each postoperative radiograph was affinely registered to that
 patient's own preoperative radiograph by maximisation of mutual information, so
@@ -69,7 +69,7 @@ def main():
     po = d[d.target == POSTOP]
 
     section('Registration quality')
-    report('patients with a simulation and both radiographs', len(ai), 78, '{:d}')
+    report('patients with a simulation and both radiographs', len(ai), 354, '{:d}')
     check('one postoperative comparison per patient', len(po) == len(ai),
           f'{len(po)} vs {len(ai)}')
     report('whole-image NCC, median', round(ai.whole_ncc.median(), 2), 0.85, '{:.2f}')

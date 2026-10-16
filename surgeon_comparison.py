@@ -47,9 +47,9 @@ DEFAULT_SURGEONS = os.path.join(
 # the column names in the surgeon table; remapped here so the script states its
 # own expectations rather than depending on a particular delivery format
 COL_ERROR = '真实术后主弯(°)'
-SURGEONS = [('E1', 'E1', 4.41, 5.58, 64.4, 93.8, 0.762, 'attending, 8 years'),
-            ('E2', 'E2', 4.27, 5.29, 65.3, 96.3, 0.783, 'attending, 11 years'),
-            ('E3', 'E3', 4.09, 5.11, 64.1, 96.3, 0.791, 'associate chief, 16 years')]
+SURGEONS = [('E1', 'E1', 4.57, 5.76, 60.7, 93.5, 0.749, 'attending, 8 years'),
+            ('E2', 'E2', 4.47, 5.53, 60.5, 94.9, 0.766, 'attending, 11 years'),
+            ('E3', 'E3', 4.30, 5.34, 65.0, 95.5, 0.776, 'associate chief, 16 years')]
 
 
 def paired_mean_ci(a, b, alpha=0.05):
@@ -118,18 +118,18 @@ def main():
 
     print('\n  panel mean of the three surgeons')
     perr = panel - actual
-    report('panel mean: MAE (deg)', round(np.abs(perr).mean(), 2), 4.00, '{:.2f}')
-    report('panel mean: RMSE (deg)', round(np.sqrt((perr ** 2).mean()), 2), 5.02, '{:.2f}')
+    report('panel mean: MAE (deg)', round(np.abs(perr).mean(), 2), 4.22, '{:.2f}')
+    report('panel mean: RMSE (deg)', round(np.sqrt((perr ** 2).mean()), 2), 5.25, '{:.2f}')
     report('panel mean: within +/-5 deg (%)', round(100 * (np.abs(perr) <= 5).mean(), 1),
-           66.7, '{:.1f}')
+           63.3, '{:.1f}')
     report('panel mean: within +/-10 deg (%)',
-           round(100 * (np.abs(perr) <= 10).mean(), 1), 95.8, '{:.1f}')
-    report('panel mean: ICC(2,1)', round(icc21(actual, panel), 3), 0.798, '{:.3f}')
+           round(100 * (np.abs(perr) <= 10).mean(), 1), 95.5, '{:.1f}')
+    report('panel mean: ICC(2,1)', round(icc21(actual, panel), 3), 0.783, '{:.3f}')
 
     section('AI best-of-three against each surgeon (paired, N = %d)' % len(df))
     d_ai = np.abs(ai - actual)
-    report('AI: MAE (deg)', round(d_ai.mean(), 2), 3.26, '{:.2f}')
-    report('AI: within +/-5 deg (%)', round(100 * (d_ai <= 5).mean(), 1), 81.6, '{:.1f}')
+    report('AI: MAE (deg)', round(d_ai.mean(), 2), 3.43, '{:.2f}')
+    report('AI: within +/-5 deg (%)', round(100 * (d_ai <= 5).mean(), 1), 76.3, '{:.1f}')
     diffs = []
     for key, col, *_rest in SURGEONS:
         d_s = np.abs(sg[col].values - actual)
@@ -150,11 +150,11 @@ def main():
     m, lo, hi = paired_mean_ci(np.abs(panel - actual), d_ai)
     print("\n  AI vs the three-surgeon panel mean")
     print(f"      paired MAE difference {m:+.2f} deg, 95% CI [{lo:+.2f}, {hi:+.2f}]")
-    report('AI advantage over the panel mean (deg)', round(m, 2), 0.74, '{:.2f}')
-    report('  lower 95% confidence limit', round(lo, 2), 0.33, '{:.2f}')
-    report('  upper 95% confidence limit', round(hi, 2), 1.15, '{:.2f}')
-    report('AI advantage, smallest of the four (deg)', round(min(diffs + [m]), 2), 0.74, '{:.2f}')
-    report('AI advantage, largest of the four (deg)', round(max(diffs + [m]), 2), 1.15, '{:.2f}')
+    report('AI advantage over the panel mean (deg)', round(m, 2), 0.79, '{:.2f}')
+    report('  lower 95% confidence limit', round(lo, 2), 0.37, '{:.2f}')
+    report('  upper 95% confidence limit', round(hi, 2), 1.21, '{:.2f}')
+    report('AI advantage, smallest of the four (deg)', round(min(diffs + [m]), 2), 0.79, '{:.2f}')
+    report('AI advantage, largest of the four (deg)', round(max(diffs + [m]), 2), 1.14, '{:.2f}')
 
     section('Agreement among the three surgeons')
     rs, mads = [], []

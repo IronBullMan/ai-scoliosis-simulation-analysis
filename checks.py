@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 """Shared reporting helpers.
 
+`report` and `check` compare against the manuscript and fail the run on a mismatch.
+`inform` prints a quantity that the manuscript does not claim, so that exploratory
+figures remain visible without being mistaken for published values.
+
 Every analysis script prints one line per quantity it checks: the value it
 computed and the value printed in the manuscript. A mismatch beyond tolerance is
 recorded, listed again at the end, and makes the script exit non-zero, so a
@@ -24,6 +28,14 @@ def report(label, got, want, fmt='{}', tol=0.011):
         PROBLEMS.append((label, got, want))
     print(f"  {'ok ' if ok else 'DIFF'} {label:<46} computed {fmt.format(got):<22} "
           f"reported {fmt.format(want)}")
+
+
+def inform(label, got, fmt='{}', note=''):
+    """Print a quantity that is computed for information and is not a claim of the
+    manuscript. It is not compared against anything, so it can never produce a
+    DIFF; the note says why it is printed."""
+    line = f"  --  {label:<46} computed {fmt.format(got):<22}"
+    print(line + (f"  ({note})" if note else ''))
 
 
 def check(label, condition, detail=''):
